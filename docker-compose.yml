@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kd_user
+      POSTGRES_PASSWORD: kd_local_password
+      POSTGRES_DB: kd_app
+    ports:
+      - "5433:5432"
+    volumes:
+      - kd_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kd_user -d kd_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  postgres-test:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kd_user
+      POSTGRES_PASSWORD: kd_local_password
+      POSTGRES_DB: kd_app_test
+    ports:
+      - "5434:5432"
+    volumes:
+      - kd_postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kd_user -d kd_app_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  kd_postgres_data:
+  kd_postgres_test_data:
